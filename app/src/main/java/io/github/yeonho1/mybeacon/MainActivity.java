@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final MyService serv = new MyService();
+        startService();
         setContentView(R.layout.activity_main);
         tvId = (TextView) findViewById(R.id.tvId);
         beaconManager = new BeaconManager(this);
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         region = new Region("ranged region",
                 null, null, null);
-        startService(new Intent(this, MyService.class));
     }
 
     @Override
@@ -59,5 +60,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         beaconManager.stopRanging(region);
         super.onPause();
+    }
+
+    public void startService() {
+        Intent serviceIntent = new Intent(this, MyService.class);
+
+        startService(serviceIntent);
+    }
+
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, MyService.class);
+        stopService(serviceIntent);
     }
 }

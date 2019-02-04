@@ -2,10 +2,12 @@ package io.github.yeonho1.mybeacon;
 
 import android.app.Application;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -15,10 +17,12 @@ import java.util.List;
 
 public class MyApplication extends Application {
     private BeaconManager beaconManager;
+    public static final String CHANNEL_ID = "beaconServiceChannel";
 
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotificationChannel();
         beaconManager = new BeaconManager(getApplicationContext());
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
@@ -60,5 +64,17 @@ public class MyApplication extends Application {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Beacon Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
     }
 }
